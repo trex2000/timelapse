@@ -1,0 +1,17 @@
+[Unit]
+Description=motion
+After=network.target mnt-500gb.mount
+
+[Service]
+Type=simple
+PIDFile= /var/run/motion/motion.pid
+ExecStart=/usr/bin/motion -c /etc/motion/motion.conf -b
+ExecStop=/bin/kill -s SIGTERM  $MAINPID
+Restart=on-failure
+RestartSec=60
+User=root
+Group=root
+
+
+[Install]
+WantedBy=multi-user.target

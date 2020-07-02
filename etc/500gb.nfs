@@ -1,0 +1,1 @@
+500gb     -fstype=nfs,rw,defaults,rsize=8192,wsize=8192,nolock,x-systemd.automount 192.168.1.3:/mnt/500gb/
