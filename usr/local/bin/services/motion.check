@@ -1,0 +1,15 @@
+#!/bin/sh
+if grep -qs '/mnt/500gb' /proc/mounts; then
+    echo "Drive is mounted."
+else
+    echo "Drive not mounted. Mounting drive"
+    mount /mnt/500gb
+    if [ $? -eq 0 ]; then
+       echo "Mount success!"
+       systemctl restart motion
+    else
+       echo "Something went wrong with the mount..."
+       systemctl stop motion
+    exit
+    fi
+fi
