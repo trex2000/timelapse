@@ -1,4 +1,5 @@
 #!/bin/sh
+
 MAIL_TO=mailto@email.com
 MAIL_TO_FAILURE=failure@email.com
 SUBJECT="[TIMELAPSE]"
@@ -8,7 +9,8 @@ MESSAGE_BODY="This is the last snapshot from Timelapse. You can download the tim
 HTTP_USERNAME=username
 HTTP_PASSWORD=password
 #Message to provide when video upload failed and direct link from server is provided
-MESSAGE_BODY_NO_VIDEO_UPLOAD="This is the last snapshot from Timelapse.  You can download the timelapse video from the link below: https://$HTTP_USERNAME:$HTTP_PASSWORD@www.hostname.com/path_to_timelapse/"
+MESSAGE_BODY_NO_VIDEO_UPLOAD="This is the last snapshot from Timelapse.  You can download the timelapse video from the link below: https://$HTTP_USERNAME:$HTTP_PASSWORD@www.barney.ro/Hdd/500gb/Movies/Timelapse/"
+MESSAGE_BODY_VIDEO_FOLDER_LINK="Timelapse videos can be downloaded from here: https://$HTTP_USERNAME:$HTTP_PASSWORD@www.barney.ro/Hdd/500gb/Movies/Timelapse "
 #url of the file upload service
 URL="https://file.io"
 #how long shall the link be available
@@ -42,6 +44,7 @@ if [ ! -f "$VIDEO_FILE_PATH" ]; then
 fi
 VIDEO_FILE_NAME=$(basename -- "$VIDEO_FILE_PATH")
 EXPIRE=${2:-$DEFAULT_EXPIRE}
+#VIDEO_FILE_PATH=/mnt/500gb/Movies/Timelapse/test.txt
 RESPONSE=$(curl -# -F "file=@${VIDEO_FILE_PATH}" "${URL}/?expires=${EXPIRE}")
 # Response looks like this: {"success":true,"key":"EhzvHTCg","link":"https://file.io/EhzvHTCg","expiry":"14 days"}
 PATTERN="success"
@@ -50,10 +53,10 @@ if [ -z "${RESPONSE##*$PATTERN*}" ] ;then  #upload was successful
     RESPONSE=${RESPONSE#*\"link\":}
     #trim tail
     RESPONSE=${RESPONSE%%,\"expiry\"*}
-    echo $MESSAGE_BODY $RESPONSE | mail -s $SUBJECT  $MAIL_TO $MAIL_TO_FAILURE -A "$SNAPSHOT_PATH/lastsnap.jpg"
+    echo $MESSAGE_BODY $RESPONSE $MESSAGE_BODY_VIDEO_FOLDER_LINK | mail -s $SUBJECT  $MAIL_TO $MAIL_TO_FAILURE -A "$SNAPSHOT_PATH/lastsnap.jpg"
 else
     echo "Timelapse error. Video file could not be uploaded. Website returned" $RESPONSE  | mail -s $SUBJECT  $MAIL_TO_FAILURE
-    echo $MESSAGE_BODY_NO_VIDEO_UPLOAD$VIDEO_FILE_NAME | mail -s $SUBJECT  $MAIL_TO $MAIL_TO_FAILURE -A "$SNAPSHOT_PATH/lastsnap.jpg"
+    echo $MESSAGE_BODY_NO_VIDEO_UPLOAD$VIDEO_FILE_NAME $MESSAGE_BODY_VIDEO_FOLDER_LINK | mail -s $SUBJECT  $MAIL_TO $MAIL_TO_FAILURE -A "$SNAPSHOT_PATH/lastsnap.jpg"
 fi
 
 
