@@ -4,8 +4,9 @@ After=network.target mnt-500gb.mount
 
 [Service]
 Type=simple
-PIDFile= /var/run/motion/motion.pid
+PIDFile=/run/motion/motion.pid
 ExecStart=/usr/bin/motion -c /etc/motion/motion.conf -b
+ExecStartPost=v4l2-ctl --overlay=1 --set-ctrl=exposure_dynamic_framerate=1 --set-ctrl=scene_mode=0 --set-ctrl=contrast=100 --set-ctrl=saturation=-3 --set-ctrl=brightness=45 --set-ctrl=sharpness=15
 ExecStop=/bin/kill -s SIGTERM  $MAINPID
 Restart=on-failure
 RestartSec=60
