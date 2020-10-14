@@ -37,6 +37,11 @@ if [ ! -f "$SNAPSHOT_PATH/lastsnap.jpg" ]; then
     echo "Timelapse error. Snapshot files doesn't exist." | mail -s $SUBJECT  $MAIL_TO_FAILURE
     exit
 fi
+#copy image to another folder
+SNAPSHOT_FILENAME="$SNAPSHOT_PATH/snapshots/snapshot_"`date +%Y-%m-%d_%H.%M.%S`".jpg"
+mkdir -p $SNAPSHOT_PATH/snapshots
+cp  $SNAPSHOT_PATH/lastsnap.jpg $SNAPSHOT_FILENAME 
+
 VIDEO_FILE_PATH=$(find $SNAPSHOT_PATH -name "*avi" -type f -exec stat -c '%Y %n' {} \; | sort -nr | awk 'NR==1,NR==1 {print $2}')
 if [ ! -f "$VIDEO_FILE_PATH" ]; then
 
